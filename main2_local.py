@@ -5,17 +5,13 @@ from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, MACD
 from ta.volatility import AverageTrueRange
 import warnings
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
 # ---- 1. Asset Lists ----
 crypto_symbols = ["BTC-USD", "ETH-USD", "SOL-USD", "XRP-USD", "ADA-USD", "DOGE-USD"]
 tech_symbols = ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "AVGO", "TSM", "BABA"]
 energy_symbols = ["XOM", "CVX", "BP", "TOT", "COP", "SHEL"]
 fx_symbols = ["EURUSD=X", "JPY=X", "GBPUSD=X", "AUDUSD=X", "CAD=X", "EURJPY=X", "GBPJPY=X", "EURGBP=X"]
-
 all_symbols = crypto_symbols + tech_symbols + energy_symbols + fx_symbols
-
 # ---- 2. Parameters ----
 start_date = "2025-07-01"
 end_date = "2025-09-17"
@@ -36,7 +32,6 @@ for symbol in all_symbols:
         continue
     df['Symbol'] = symbol
     data[symbol] = df
-
 # ---- 4. Indicator Calculation ----
 signals = []
 for symbol, df in data.items():
@@ -57,7 +52,6 @@ for symbol, df in data.items():
         df['Close'].squeeze(),
         window=14
     ).average_true_range()
-
     # ---- 5. Simple Signal Logic ----
     position = None
     entry_date = None
@@ -117,13 +111,8 @@ for symbol, df in data.items():
                 signals.append((date, symbol, 'SELL (trailing stop)', price))
                 position = None
                 continue
-
     # Save signals for each symbol
     data[symbol] = df
-
 # ---- 6. Print Trade Signals ----
 for sig in signals:
     print(f"{sig[0].date()} | {sig[1]:10} | {sig[2]:20} | Price: {sig[3]:.2f}")
-
-# ---- 7. (Optional) Save to CSV ----
-# pd.DataFrame(signals, columns=['Date', 'Symbol', 'Signal', 'Price']).to_csv('trade_signals.csv', index=False)
